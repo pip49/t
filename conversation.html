@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily English Conversation - Studio</title>
+    <style>
+        :root {
+            --primary-color: #e74c3c; /* index.html과 톤앤매너 통일 */
+            --bg-color: #f8f9fa;
+            --a-bubble: #ff6b6b;
+            --b-bubble: #ffffff;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); display: flex; flex-direction: column; align-items: center; padding: 40px 20px; margin: 0; }
+
+        .nav-header { width: 100%; max-width: 550px; display: flex; justify-content: flex-start; margin-bottom: 20px; }
+        .back-btn { text-decoration: none; color: #7f8c8d; font-size: 0.9rem; font-weight: bold; }
+
+        .chat-container { width: 100%; max-width: 550px; background: #e5ddd5; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); min-height: 450px; display: flex; flex-direction: column; overflow-y: auto; }
+
+        .bubble { margin: 12px 0; padding: 14px 18px; border-radius: 18px; font-size: 1.05rem; line-height: 1.5; max-width: 80%; animation: fadeIn 0.5s ease forwards; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .A { background-color: var(--a-bubble); color: white; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .B { background-color: var(--b-bubble); color: #333; align-self: flex-end; border-bottom-right-radius: 2px; text-align: right; }
+
+        .word-badge { background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-bottom: 20px; font-size: 1.2rem; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .control-panel { margin-top: 25px; text-align: center; }
+        .replay-btn { padding: 12px 30px; border: none; border-radius: 30px; background: var(--primary-color); color: white; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .status { margin-top: 15px; font-size: 0.85rem; color: #95a5a6; }
+    </style>
+</head>
+<body>
+
+    <div class="nav-header">
+        <a href="index.html" class="back-btn">← 단어 공부로 돌아가기</a>
+    </div>
+
+    <div id="targetWordDisplay" class="word-badge">선택된 단어 없음</div>
+
+    <div class="chat-container" id="chatBox">
+        </div>
+
+    <div class="control-panel">
+        <button class="replay-btn" onclick="startSelectedScene()">다시 듣기</button>
+        <div class="status" id="statusLabel">준비 중...</div>
+    </div>
+
+    <script>
+        const scenes = {
+    'Accommodate': [
+        { speaker: 'A', text: "I'm trying to book a table for our group, but can they accommodate 10 people?", kor: "우리 일행을 위해 테이블을 예약하려는데, 10명을 수용할 수 있을까요?" },
+        { speaker: 'B', text: "I called them earlier, and they said they can easily accommodate large groups.", kor: "아까 전화해봤는데, 단체 손님도 충분히 수용 가능하다고 했어요." },
+        { speaker: 'A', text: "That’s great! I was worried because the restaurant looks a bit small.", kor: "다행이네요! 식당이 좀 작아 보여서 걱정했거든요." },
+        { speaker: 'B', text: "Don't worry, they have a spacious private room in the back.", kor: "걱정 마세요, 뒤쪽에 넓은 개인실이 따로 있더라고요." }
+    ],
+    'Acquisition': [
+        { speaker: 'A', text: "Is that a new camera? It looks like a very expensive acquisition.", kor: "그거 새 카메라예요? 아주 비싸게 장만한 물건(습득물) 같아 보이네요." },
+        { speaker: 'B', text: "Yes, it’s my latest acquisition for my photography hobby.", kor: "네, 제 사진 취미를 위해 최근에 새로 들인 거예요." },
+        { speaker: 'A', text: "The image quality is amazing; you definitely made a good choice.", kor: "화질이 정말 좋네요. 확실히 잘 선택하신 것 같아요." },
+        { speaker: 'B', text: "Thanks! I spent weeks reading reviews before buying it.", kor: "고마워요! 사기 전에 몇 주 동안 리뷰를 읽어봤답니다." }
+    ],
+    'Adjourn': [
+        { speaker: 'A', text: "We’ve been studying for three hours; shall we adjourn the meeting for now?", kor: "벌써 3시간째 공부하고 있네요. 이제 회의를 잠시 마칠까요?" },
+        { speaker: 'B', text: "I agree. Let’s adjourn and go grab some lunch together.", kor: "동감이에요. 일단 마무리하고 같이 점심 먹으러 가요." },
+        { speaker: 'A', text: "Perfect! I know a great sandwich shop just around the corner.", kor: "좋아요! 바로 모퉁이 돌아가면 정말 맛있는 샌드위치 집이 있어요." },
+        { speaker: 'B', text: "Sounds like a plan. I’m starving!", kor: "좋은 생각이에요. 저 배고파 죽겠어요!" }
+    ],
+    'Affordable': [
+        { speaker: 'A', text: "I need to find a new apartment, but it's so hard to find something affordable.", kor: "새 아파트를 찾아야 하는데, 가격이 적당한 곳을 찾기가 너무 힘들어요." },
+        { speaker: 'B', text: "Have you checked the suburbs? The rent there is much more affordable.", kor: "교외 지역은 확인해 보셨나요? 그쪽 집세가 훨씬 저렴해요." },
+        { speaker: 'A', text: "I'll look into it, but I’m worried about the long commute to work.", kor: "한번 알아볼게요, 하지만 출퇴근 시간이 길어질까 봐 걱정되네요." },
+        { speaker: 'B', text: "True, but you'll save enough money to buy a comfortable car!", kor: "맞아요, 하지만 편안한 차를 살 수 있을 만큼 돈을 아낄 수 있을 거예요!" }
+    ],
+    'Ambitious': [
+        { speaker: 'A', text: "I heard you're planning to climb Mount Everest next year. That's very ambitious!", kor: "내년에 에베레스트산을 등반할 계획이라고 들었어요. 정말 야심 차네요!" },
+        { speaker: 'B', text: "I know, but I’ve always been an ambitious person who loves a challenge.", kor: "알아요, 하지만 전 항상 도전을 즐기는 야심 있는 사람이었거든요." },
+        { speaker: 'A', text: "Just make sure you train hard; it's a dangerous journey.", kor: "훈련 열심히 하세요. 정말 위험한 여정이니까요." },
+        { speaker: 'B', text: "I've already started my training program. I'm ready for this.", kor: "이미 훈련 프로그램을 시작했어요. 준비됐습니다." }
+    ],
+    'Appraise': [
+        { speaker: 'A', text: "I found this old vase in the attic. Should I get someone to appraise it?", kor: "다락방에서 이 오래된 꽃병을 찾았어요. 누가 이걸 감정하게 해볼까요?" },
+        { speaker: 'B', text: "Definitely. An expert can appraise its value and tell if it's an antique.", kor: "당연하죠. 전문가가 가치를 평가해서 골동품인지 알려줄 수 있을 거예요." },
+        { speaker: 'A', text: "What if it's just a cheap replica?", kor: "그냥 값싼 복제품이면 어쩌죠?" },
+        { speaker: 'B', text: "Even then, at least you'll know for sure and can stop wondering.", kor: "그렇다 하더라도, 적어도 확실히 알게 되니까 더 이상 궁금해하지 않아도 되잖아요." }
+    ],
+    'Authorization': [
+        { speaker: 'A', text: "I can't log into the company server. Do I need special authorization?", kor: "회사 서버에 로그인이 안 돼요. 특별한 권한 승인이 필요한가요?" },
+        { speaker: 'B', text: "Yes, you need to request authorization from the IT department first.", kor: "네, 먼저 IT 부서에 승인을 요청해야 합니다." },
+        { speaker: 'A', text: "I thought my standard ID would be enough.", kor: "제 일반 아이디면 충분할 줄 알았어요." },
+        { speaker: 'B', text: "For the secure server, they require an extra level of approval.", kor: "보안 서버라서 추가 단계의 승인이 필요하거든요." }
+    ],
+    'Collaborate': [
+        { speaker: 'A', text: "I’m struggling with this project. Do you want to collaborate with me?", kor: "이 프로젝트 때문에 힘드네요. 저랑 협력해서 같이 해보실래요?" },
+        { speaker: 'B', text: "I'd love to collaborate! Two heads are definitely better than one.", kor: "협력하고 싶어요! 백지장도 맞들면 낫다는 말이 있잖아요." },
+        { speaker: 'A', text: "Great, let's meet tomorrow to discuss our first steps.", kor: "좋아요, 내일 만나서 첫 단계부터 논의해 봐요." },
+        { speaker: 'B', text: "I'll bring my notes and some coffee. See you then!", kor: "노트랑 커피 좀 챙겨갈게요. 그때 봐요!" }
+    ],
+    'Commemorate': [
+        { speaker: 'A', text: "The city is building a new park to commemorate the local heroes.", kor: "시에서 지역 영웅들을 기념하기 위해 새 공원을 조성하고 있어요." },
+        { speaker: 'B', text: "That's a beautiful way to commemorate their service to the community.", kor: "지역사회를 위한 그들의 헌신을 기념하는 아주 아름다운 방법이네요." },
+        { speaker: 'A', text: "They're even putting up a bronze statue in the center.", kor: "중앙에 청동상도 세운다고 하더라고요." },
+        { speaker: 'B', text: "It will be a great place for future generations to learn about them.", kor: "미래 세대들이 그들에 대해 배울 수 있는 좋은 장소가 될 거예요." }
+    ],
+    'Commitment': [
+        { speaker: 'A', text: "Learning a new language requires a huge time commitment, doesn't it?", kor: "외국어를 배우는 건 엄청난 시간적 헌신(전념)이 필요하죠, 그렇죠?" },
+        { speaker: 'B', text: "It does, but your commitment will pay off when you travel abroad.", kor: "맞아요, 하지만 당신의 전념은 해외여행을 갈 때 보상받게 될 거예요." },
+        { speaker: 'A', text: "I've been practicing every day for an hour.", kor: "매일 한 시간씩 연습하고 있어요." },
+        { speaker: 'B', text: "That's the spirit! Consistency is the key to success.", kor: "바로 그 자세예요! 꾸준함이 성공의 열쇠입니다." }
+    ],
+    'Complimentary': [
+        { speaker: 'A', text: "The hotel offered us complimentary breakfast for our entire stay.", kor: "호텔에서 숙박 기간 내내 무료 조식을 제공해 주었어." },
+        { speaker: 'B', text: "Wow, I love complimentary perks! It saves us a lot of money.", kor: "와, 난 무료 혜택이 정말 좋아! 덕분에 돈을 많이 아끼겠네." },
+        { speaker: 'A', text: "The food is actually quite good too, not just toast and cereal.", kor: "단순히 토스트랑 시리얼만 있는 게 아니라 음식도 꽤 괜찮아." },
+        { speaker: 'B', text: "Let's make sure we wake up early enough to enjoy it tomorrow.", kor: "내일 그거 즐길 수 있게 일찍 일어나도록 하자." }
+    ],
+    'Confidential': [
+        { speaker: 'A', text: "Please keep this information confidential; it's not for public release yet.", kor: "이 정보는 기밀로 유지해 주세요. 아직 대중에게 공개할 단계가 아니에요." },
+        { speaker: 'B', text: "Don't worry, I understand that this is a confidential matter.", kor: "걱정 마세요, 이것이 기밀 사항이라는 걸 잘 알고 있습니다." },
+        { speaker: 'A', text: "If this leaks, it could cause a lot of trouble for the company.", kor: "만약 이게 새어 나가면 회사에 큰 문제가 생길 수 있어요." },
+        { speaker: 'B', text: "My lips are sealed. I won't tell a soul.", kor: "입 꼭 다물고 있을게요. 아무에게도 말하지 않을 겁니다." }
+    ],
+    'Congested': [
+        { speaker: 'A', text: "The highway is so congested today. We're barely moving!", kor: "오늘 고속도로가 너무 혼잡하네요. 거의 움직이지를 못하고 있어요!" },
+        { speaker: 'B', text: "It’s always congested during rush hour. We should have taken the train.", kor: "퇴근 시간엔 항상 막혀요. 기차를 탔어야 했나 봐요." },
+        { speaker: 'A', text: "I think there's an accident up ahead causing the delay.", kor: "앞쪽에 사고가 나서 지체되는 것 같아요." },
+        { speaker: 'B', text: "Next time, let's check the traffic app before we leave.", kor: "다음번엔 출발하기 전에 교통 앱을 꼭 확인해 봐요." }
+    ],
+    'Consecutive': [
+        { speaker: 'A', text: "It has been raining for five consecutive days. I miss the sun!", kor: "5일 연속으로 비가 오고 있어요. 태양이 그리워요!" },
+        { speaker: 'B', text: "Five consecutive days? That must be a record for this month.", kor: "5일 연속이라고요? 이번 달 들어 기록적이겠는데요." },
+        { speaker: 'A', text: "Everything feels so damp and gloomy.", kor: "모든 게 눅눅하고 우울하게 느껴져요." },
+        { speaker: 'B', text: "The forecast says it will finally clear up this weekend.", kor: "일기예보에 따르면 이번 주말엔 드디어 갠다고 하네요." }
+    ],
+    'Deliberate': [
+        { speaker: 'A', text: "Do you think his mistake was accidental or a deliberate act?", kor: "그의 실수가 우연이었다고 생각하세요, 아니면 의도적인 행동이었다고 보세요?" },
+        { speaker: 'B', text: "It felt like a deliberate attempt to slow down the project.", kor: "프로젝트를 늦추려는 고의적인 시도처럼 느껴졌어요." },
+        { speaker: 'A', text: "I don't want to accuse him without proof, though.", kor: "하지만 증거 없이 그를 비난하고 싶지는 않네요." },
+        { speaker: 'B', text: "Let's watch his actions closely over the next few days.", kor: "앞으로 며칠 동안 그의 행동을 면밀히 지켜봅시다." }
+    ],
+    'Designate': [
+        { speaker: 'A', text: "We need to designate a driver for the party tonight.", kor: "오늘 밤 파티를 위해 지정 운전자를 정해야 해요." },
+        { speaker: 'B', text: "I'll volunteer to be the designate driver. I don't feel like drinking anyway.", kor: "제가 지정 운전자를 자원할게요. 어차피 술 마시고 싶지 않거든요." },
+        { speaker: 'A', text: "That's very kind of you! We'll buy you dinner instead.", kor: "정말 친절하시네요! 대신 저희가 저녁 살게요." },
+        { speaker: 'B', text: "Deal! I'm looking forward to that steak house.", kor: "좋아요! 그 스테이크 집 기대되는데요." }
+    ],
+    'Deteriorate': [
+        { speaker: 'A', text: "The condition of this old building continues to deteriorate every year.", kor: "이 오래된 건물의 상태가 매년 계속 악화되고 있어요." },
+        { speaker: 'B', text: "If they don't fix the roof soon, it will deteriorate beyond repair.", kor: "빨리 지붕을 수리하지 않으면 수리할 수 없을 정도로 악화될 거예요." },
+        { speaker: 'A', text: "It's a shame because it has such beautiful architecture.", kor: "건축 양식이 참 아름다운데 안타깝네요." },
+        { speaker: 'B', text: "Maybe the city will provide a grant to restore it.", kor: "아마 시에서 복원을 위해 지원금을 줄지도 몰라요." }
+    ],
+    'Discard': [
+        { speaker: 'A', text: "Should I discard these old magazines or donate them?", kor: "이 낡은 잡지들을 버릴까요, 아니면 기부할까요?" },
+        { speaker: 'B', text: "Don't discard them! The local library might want them for their collection.", kor: "버리지 마세요! 지역 도서관에서 소장용으로 원할 수도 있어요." },
+        { speaker: 'A', text: "Good idea. I'd rather see them used than in the trash.", kor: "좋은 생각이네요. 쓰레기통에 있는 것보다 사용되는 걸 보는 게 낫겠어요." },
+        { speaker: 'B', text: "I'll help you box them up this afternoon.", kor: "오늘 오후에 박스에 담는 걸 도와줄게요." }
+    ],
+    'Disrupt': [
+        { speaker: 'A', text: "The loud construction noise outside is starting to disrupt my focus.", kor: "밖의 시끄러운 공사 소음이 제 집중력을 방해하기 시작했어요." },
+        { speaker: 'B', text: "I'm sorry, it's hard not to let it disrupt your work. Try these headphones.", kor: "안타깝네요, 업무를 방해받지 않기가 참 힘들죠. 이 헤드폰을 써보세요." },
+        { speaker: 'A', text: "Thanks, these noise-canceling ones are a lifesaver.", kor: "고마워요, 이 노이즈 캔슬링 헤드폰이 절 살렸네요." },
+        { speaker: 'B', text: "They're working on the pipes, so it should be over by tomorrow.", kor: "배관 공사 중이라니 내일이면 끝날 거예요." }
+    ],
+    'Eliminate': [
+        { speaker: 'A', text: "We need to eliminate all the bugs in the software before the launch.", kor: "출시 전에 소프트웨어의 모든 버그를 제거해야 합니다." },
+        { speaker: 'B', text: "Our team is working overtime to eliminate every single error.", kor: "저희 팀은 모든 오류를 없애기 위해 초과 근무를 하고 있어요." },
+        { speaker: 'A', text: "Quality is our top priority, so don't rush the process too much.", kor: "품질이 최우선이니 과정을 너무 서두르지는 마세요." },
+        { speaker: 'B', text: "Understood. We'll make sure the final version is perfect.", kor: "알겠습니다. 최종 버전이 완벽하도록 확실히 할게요." }
+    ],
+    'Enhance': [
+        { speaker: 'A', text: "I’m using this new filter to enhance the colors in my photos.", kor: "사진의 색감을 향상시키기 위해 이 새 필터를 사용하고 있어요." },
+        { speaker: 'B', text: "It really does enhance the sunset! The orange tones look so vivid.", kor: "정말 노을을 더 멋지게 만들어주네요! 오렌지색 톤이 아주 생생해 보여요." },
+        { speaker: 'A', text: "I want to make sure my travel blog looks professional.", kor: "제 여행 블로그가 전문적으로 보였으면 좋겠거든요." },
+        { speaker: 'B', text: "Well, you're definitely on the right track with these edits.", kor: "음, 이런 편집 방식이라면 확실히 잘하고 계신 거예요." }
+    ],
+    'Feasible': [
+        { speaker: 'A', text: "Do you think it's feasible to finish this report by tomorrow morning?", kor: "내일 아침까지 이 보고서를 끝내는 게 실행 가능하다고 생각하세요?" },
+        { speaker: 'B', text: "It’s not feasible if I work alone, but with your help, we can do it.", kor: "혼자 하면 불가능하지만, 당신이 도와준다면 할 수 있어요." },
+        { speaker: 'A', text: "Then let's stay late tonight and get it done together.", kor: "그럼 오늘 밤 늦게까지 남아서 같이 마무리해요." },
+        { speaker: 'B', text: "I'll order some pizza so we don't have to worry about dinner.", kor: "저녁 걱정 없게 피자를 좀 주문할게요." }
+    ],
+    'Fluctuate': [
+        { speaker: 'A', text: "The gas prices seem to fluctuate so much these days.", kor: "요즘 휘발유 가격이 너무 많이 변동하는 것 같아요." },
+        { speaker: 'B', text: "They fluctuate based on the global market. It's very unpredictable.", kor: "국제 시장에 따라 변동하는 거라 매우 예측하기 어렵죠." },
+        { speaker: 'A', text: "I should have filled up my tank yesterday when it was cheaper.", kor: "더 저렴했을 때 어제 미리 기름을 채워놨어야 했어요." },
+        { speaker: 'B', text: "It might go down again next week, so just wait if you can.", kor: "다음 주에 다시 내려갈 수도 있으니 가능하면 기다려 보세요." }
+    ],
+    'Implementation': [
+        { speaker: 'A', text: "The implementation of the new rules has caused some confusion among the staff.", kor: "새로운 규칙의 시행이 직원들 사이에서 약간의 혼란을 일으켰어요." },
+        { speaker: 'B', text: "Any new implementation takes time to get used to. We need to be patient.", kor: "어떤 새로운 시행이든 익숙해지는 데 시간이 걸리죠. 인내심을 가져야 해요." },
+        { speaker: 'A', text: "Maybe we should hold a meeting to explain the changes more clearly.", kor: "아마 변화를 더 명확하게 설명하기 위해 회의를 열어야 할 것 같아요." },
+        { speaker: 'B', text: "That's a great idea. I'll schedule one for Friday morning.", kor: "좋은 생각입니다. 금요일 아침으로 일정을 잡아볼게요." }
+    ],
+    'Incur': [
+        { speaker: 'A', text: "If we return the rental car late, will we incur a penalty fee?", kor: "렌터카를 늦게 반납하면 벌금을 물게 될까요?" },
+        { speaker: 'B', text: "Yes, you will incur an extra day's charge if you're more than an hour late.", kor: "네, 한 시간 이상 늦으면 하루 치 요금이 추가로 발생할 거예요." },
+        { speaker: 'A', text: "Then we better leave now to make sure we get there on time.", kor: "그럼 제시간에 도착할 수 있도록 지금 떠나는 게 좋겠네요." },
+        { speaker: 'B', text: "Don't worry, the traffic looks light on the map.", kor: "걱정 마세요, 지도상으로 교통 흐름이 원활해 보여요." }
+    ],
+    'Mandatory': [
+        { speaker: 'A', text: "Is it mandatory to attend the company workshop this weekend?", kor: "이번 주말 회사 워크숍에 참석하는 것이 의무인가요?" },
+        { speaker: 'B', text: "Yes, the CEO said it’s mandatory for all employees to be there.", kor: "네, 대표님이 모든 직원이 참석하는 것이 의무라고 하셨어요." },
+        { speaker: 'A', text: "I had plans for Saturday, but I guess I'll have to cancel them.", kor: "토요일에 계획이 있었는데, 취소해야겠네요." },
+        { speaker: 'B', text: "At least they are providing lunch and some cool swag!", kor: "적어도 점심이랑 멋진 기념품들을 준대요!" }
+    ],
+    'Negotiate': [
+        { speaker: 'A', text: "I managed to negotiate a better price for the new office furniture.", kor: "새 사무용 가구 가격을 더 잘 협상했어요." },
+        { speaker: 'B', text: "Great job! How were you able to negotiate such a big discount?", kor: "잘하셨네요! 어떻게 그렇게 큰 할인을 협상할 수 있었나요?" },
+        { speaker: 'A', text: "I told them we were looking at their competitors' prices too.", kor: "그들의 경쟁사 가격도 살펴보고 있다고 말했죠." },
+        { speaker: 'B', text: "That's a classic move. It always works with wholesalers.", kor: "정석적인 방법이네요. 도매상들에게는 항상 통하더라고요." }
+    ],
+    'Outcome': [
+        { speaker: 'A', text: "We are still waiting for the outcome of the final exam.", kor: "아직 기말고사 결과를 기다리고 있어요." },
+        { speaker: 'B', text: "The outcome will be posted on the school website by noon tomorrow.", kor: "결과는 내일 정오까지 학교 웹사이트에 게시될 거예요." },
+        { speaker: 'A', text: "I'm so nervous! I really hope I passed.", kor: "정말 떨리네요! 꼭 합격했으면 좋겠어요." },
+        { speaker: 'B', text: "You studied so hard, I'm sure you did great.", kor: "공부 열심히 하셨잖아요, 분명 잘했을 거예요." }
+    ],
+    'Persuade': [
+        { speaker: 'A', text: "I tried to persuade my parents to let me study abroad.", kor: "부모님께 해외 유학을 보내달라고 설득해 봤어요." },
+        { speaker: 'B', text: "Were you able to persuade them, or are they still worried?", kor: "설득에 성공했나요, 아니면 아직도 걱정하시나요?" },
+        { speaker: 'A', text: "They're still thinking about it, but I showed them my budget plan.", kor: "여전히 생각 중이시지만, 제 예산 계획서를 보여드렸어요." },
+        { speaker: 'B', text: "Showing them you're responsible is the best way to win them over.", kor: "책임감 있는 모습을 보여드리는 게 그분들의 마음을 얻는 가장 좋은 방법이죠." }
+    ],
+    'Precaution': [
+        { speaker: 'A', text: "I always carry an umbrella as a precaution, even when it's sunny.", kor: "전 맑은 날에도 예방 조치로 항상 우산을 가지고 다녀요." },
+        { speaker: 'B', text: "That's a smart precaution. The weather here changes so fast.", kor: "현명한 대비책이네요. 여기 날씨가 워낙 빨리 바뀌니까요." },
+        { speaker: 'A', text: "Exactly! I'd rather be safe than soaking wet.", kor: "맞아요! 흠뻑 젖는 것보다 안전한 게 낫죠." },
+        { speaker: 'B', text: "I should start doing the same; I got caught in the rain yesterday.", kor: "저도 그렇게 해야겠어요. 어제 비를 좀 맞았거든요." }
+    ],
+    'Procrastinate': [
+        { speaker: 'A', text: "I have a big essay due, but I keep finding reasons to procrastinate.", kor: "중요한 에세이 마감일이 다가오는데, 자꾸 미룰 핑계만 찾게 되네요." },
+        { speaker: 'B', text: "Don't procrastinate! You'll feel much better once you finish it.", kor: "미루지 마세요! 일단 끝내고 나면 기분이 훨씬 좋아질 거예요." },
+        { speaker: 'A', text: "You're right. I'll turn off my phone and start writing now.", kor: "맞아요. 지금 휴대폰 끄고 바로 쓰기 시작할게요." },
+        { speaker: 'B', text: "Good luck! I'll check on you in an hour to see your progress.", kor: "행운을 빌어요! 진행 상황을 보러 한 시간 뒤에 확인해 볼게요." }
+    ],
+    'Incentive': [
+        { speaker: 'A', text: "The company is offering a cash incentive for the employee of the month.", kor: "회사에서 이달의 사원에게 현금 인센티브를 제공한대요." },
+        { speaker: 'B', text: "That's a great incentive! It definitely makes me want to work harder.", kor: "정말 좋은 동기부여네요! 확실히 더 열심히 일하고 싶게 만들어요." },
+        { speaker: 'A', text: "I'm aiming for it this month. I've already finished all my tasks.", kor: "전 이번 달에 그걸 목표로 하고 있어요. 이미 모든 과업을 마쳤거든요." },
+        { speaker: 'B', text: "I'm your competition then! Let the best worker win.", kor: "그럼 제가 경쟁자군요! 최고의 일꾼이 이기도록 해보죠." }
+    ]
+};
+
+
+
+        let currentWord = "";
+        let isPlaying = false;
+        let femaleVoice, maleVoice;
+
+        // 목소리 로딩 및 성별 할당
+        function loadVoices() {
+            const voices = window.speechSynthesis.getVoices();
+            femaleVoice = voices.find(v => v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Google US English'));
+            maleVoice = voices.find(v => v.name.includes('Male') || v.name.includes('David') || v.name.includes('Alex'));
+        }
+
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+
+        function speak(text, speaker, callback) {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'en-US';
+            msg.voice = (speaker === 'A') ? femaleVoice : maleVoice;
+            msg.pitch = (speaker === 'A') ? 1.1 : 0.9;
+            msg.onend = callback;
+            window.speechSynthesis.speak(msg);
+        }
+
+        async function playScene(word) {
+            if (!scenes[word] || isPlaying) return;
+            isPlaying = true;
+
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML = '';
+            document.getElementById('statusLabel').innerText = "재생 중...";
+
+            for (const line of scenes[word]) {
+                const div = document.createElement('div');
+                div.className = `bubble ${line.speaker}`;
+                div.innerText = `${line.speaker}: ${line.text}`;
+                chatBox.appendChild(div);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                await new Promise(resolve => speak(line.text, line.speaker, resolve));
+                await new Promise(resolve => setTimeout(resolve, 600));
+            }
+
+            isPlaying = false;
+            document.getElementById('statusLabel').innerText = "재생 완료";
+        }
+
+        function startSelectedScene() {
+            playScene(currentWord);
+        }
+
+        // 페이지 로드 시 URL 파라미터 확인
+        window.onload = () => {
+            loadVoices();
+            const urlParams = new URLSearchParams(window.location.search);
+            currentWord = urlParams.get('word');
+
+            if (currentWord && scenes[currentWord]) {
+                document.getElementById('targetWordDisplay').innerText = `Keyword: ${currentWord}`;
+                // 브라우저 정책상 사용자 상호작용 후 소리가 나므로 안내 문구 표시
+                document.getElementById('statusLabel').innerText = "화면을 클릭하면 대화가 시작됩니다.";
+
+                // 첫 클릭 시 대화 시작되게 유도
+                document.body.addEventListener('click', () => {
+                    playScene(currentWord);
+                }, { once: true });
+            } else {
+                document.getElementById('targetWordDisplay').innerText = "단어를 선택해주세요.";
+            }
+        };
+    </script>
+</body>
+</html>

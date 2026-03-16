@@ -49,7 +49,11 @@
     <div class="study-section">
         <div id="wordMain" class="word-main" onclick="speak(this.innerText)">Word</div>
         <div id="wordPhonetic" style="color:#7f8c8d;">/phonetic/</div>
-        <div class="meaning-box" id="meaning">의미</div>
+
+       <div class="meaning-box" id="meaning">의미</div>
+       <button onclick="goToConv()" style="width:100%; margin-top:10px; padding:10px; border-radius:8px; border:1px solid #e74c3c; color:#e74c3c; background:white; font-weight:bold; cursor:pointer;">
+    🎧 이 단어 상황 회화 듣기
+</button>
 
         <div id="exampleList"></div>
     </div>
@@ -295,6 +299,14 @@ const vocaData = [
     }
 
     window.onload = displayWord;
+
+
+function goToConv() {
+    const word = vocaData[currentIndex][0];
+    // 같은 폴더에 conversation.html이 있어야 합니다.
+    location.href = `conversation.html?word=${word}`;
+}
+
 </script>
 </body>
 </html>
