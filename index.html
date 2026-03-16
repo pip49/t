@@ -4,109 +4,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOEIC Long-form Expert</title>
+    <title>TOEIC Advanced Learner</title>
     <style>
-        :root { --primary: #e74c3c; --bg: #f4f7f6; --text: #2d3748; }
+        :root { --primary: #e74c3c; --bg: #f8f9fa; --text: #2d3748; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .voca-container { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); width: 100%; max-width: 650px; } /* 폭을 조금 더 넓힘 */
+        .voca-container { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); width: 100%; max-width: 550px; }
 
+        /* 상단 바 */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--primary); padding-bottom: 12px; }
+        .star-btn { cursor: pointer; font-size: 1.6rem; color: #ddd; transition: 0.2s; }
+        .star-btn.active { color: #f1c40f; transform: scale(1.2); }
 
+        /* 단어 영역 */
         .word-section { text-align: center; margin-bottom: 30px; }
-        .word-main { font-size: 3.2rem; font-weight: 800; color: var(--primary); cursor: pointer; }
-        .meaning-tag { display: inline-block; background: #fff5f5; color: #c53030; padding: 8px 20px; border-radius: 8px; font-weight: bold; font-size: 1.2rem; margin-top: 15px; }
+        .word-main { font-size: 3rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; margin-bottom: 5px; cursor: pointer; }
+        .meaning-tag { display: inline-block; background: #fff5f5; color: #c53030; padding: 5px 15px; border-radius: 50px; font-weight: bold; font-size: 1.1rem; margin-top: 10px; }
 
-        /* 장문 예문 카드 스타일 */
-        .example-list { margin-top: 25px; display: flex; flex-direction: column; gap: 20px; }
-        .example-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 15px; padding: 20px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        /* 예문 영역 강화 */
+        .example-list { margin-top: 25px; display: flex; flex-direction: column; gap: 15px; }
+        .example-card { background: #fdfdfd; border-radius: 12px; border: 1px solid #edf2f7; padding: 15px; position: relative; border-left: 5px solid #feb2b2; transition: 0.3s; }
+        .example-card:hover { border-color: var(--primary); transform: translateX(5px); }
 
-        .ex-eng { font-size: 1.1rem; color: var(--text); line-height: 1.8; cursor: pointer; margin-bottom: 12px; text-align: justify; padding-right: 25px; }
-        .ex-eng b { color: var(--primary); text-decoration: underline; text-underline-offset: 4px; }
+        /* 예문 내 핵심 단어 하이라이트 스타일 */
+        .highlight { color: var(--primary); font-weight: bold; text-decoration: underline; }
 
-        /* 해석 영역 (클릭 시 노출) */
-        .ex-kor { font-size: 0.95rem; color: #4a5568; background: #f8fafc; padding: 12px; border-radius: 8px; border-left: 4px solid #cbd5e0; display: none; line-height: 1.6; }
+        .ex-eng { font-size: 1.05rem; color: var(--text); line-height: 1.6; cursor: pointer; margin-bottom: 8px; padding-right: 30px; }
 
-        .btn-show-kor { font-size: 0.8rem; color: #3498db; cursor: pointer; margin-bottom: 10px; display: inline-block; }
+        /* 해석 가리기 효과 */
+        .ex-kor { font-size: 0.9rem; color: #718096; border-top: 1px solid #f1f1f1; padding-top: 8px; filter: blur(4px); transition: 0.3s; cursor: help; }
+        .ex-kor:hover { filter: blur(0); background: #fefcbf; }
 
-        /* 타이핑 테스트 */
-        .test-zone { margin-top: 40px; background: #2d3748; padding: 25px; border-radius: 15px; color: white; }
-        .typing-input { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 1.3rem; text-align: center; box-sizing: border-box; margin-top: 10px; }
-        .typing-input.correct { background: #48bb78; color: white; }
+        /* 스피커 아이콘 */
+        .speak-icon { position: absolute; right: 15px; top: 15px; cursor: pointer; opacity: 0.3; }
+        .speak-icon:hover { opacity: 1; }
 
-        .btn-next { width: 100%; margin-top: 15px; padding: 20px; border: none; border-radius: 10px; background: var(--primary); color: white; font-weight: 800; font-size: 1.2rem; cursor: pointer; opacity: 0.3; pointer-events: none; }
-        .btn-next.active { opacity: 1; pointer-events: auto; }
+        /* 타이핑 & 하단 영역 */
+        .test-zone { margin-top: 35px; text-align: center; background: #f1f5f9; padding: 20px; border-radius: 15px; }
+        .typing-input { width: 100%; padding: 15px; border: 2px solid #cbd5e0; border-radius: 10px; font-size: 1.2rem; text-align: center; box-sizing: border-box; }
+        .typing-input.correct { border-color: #48bb78; background: #f0fff4; }
+
+        .btn-next { width: 100%; margin-top: 15px; padding: 18px; border: none; border-radius: 10px; background: var(--primary); color: white; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.3s; opacity: 0.4; pointer-events: none; }
+        .btn-next.active { opacity: 1; pointer-events: auto; box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); }
     </style>
 </head>
 <body>
 
 <div class="voca-container">
     <div class="header">
-        <span id="wordCounter" style="font-weight: bold;">[ADVANCED TOEIC] 1 / 2</span>
-        <span style="font-size: 0.8rem; color: #999;">장문 예문을 끝까지 듣고 따라 읽으세요.</span>
+        <span id="starBtn" class="star-btn" onclick="toggleStar()">★</span>
+        <div id="wordCounter" style="font-weight: bold; color: #4a5568;">WORD 1 / 3</div>
     </div>
 
     <div class="word-section">
-        <div id="wordMain" class="word-main" onclick="speak(this.innerText)">Mandatory</div>
-        <div id="meaning" class="meaning-tag">의무적인, 필수의</div>
+        <div id="wordMain" class="word-main" onclick="speak(this.innerText)">Word</div>
+        <div id="wordPhonetic" style="color: #a0aec0; font-size: 1.1rem;">/phonetic/</div>
+        <div id="meaning" class="meaning-tag">뜻</div>
     </div>
 
     <div id="exampleList" class="example-list">
         </div>
 
     <div class="test-zone">
-        <div style="font-weight: bold;">SPELLING CHECK</div>
-        <input type="text" id="userInput" class="typing-input" placeholder="위 단어를 입력하여 복습을 마칩니다" autocomplete="off" oninput="checkTest()">
-        <button id="nextBtn" class="btn-next" onclick="loadNextWord()">PASS TO NEXT (Enter)</button>
+        <div style="font-size: 0.85rem; color: #718096; margin-bottom: 10px;">암기 확인: 단어를 입력하세요</div>
+        <input type="text" id="userInput" class="typing-input" placeholder="Type the word here..." autocomplete="off" oninput="checkTest()">
+        <button id="nextBtn" class="btn-next" onclick="loadNextWord()">NEXT STEP (Enter)</button>
     </div>
 </div>
 
 <script>
+    // 데이터 구조에 하이라이트할 키워드 포함 가능 (미지정 시 단어 자동 매칭)
     const vocaData = [
         [
-            "Mandatory", "의무적인, 필수의",
+            "Mandatory", "/ˈmændətɔːri/", "의무적인, 필수의",
             [
-                {
-                    eng: "The board of directors recently announced that it is <b>mandatory</b> for all senior management personnel to attend the upcoming strategic planning retreat, which aims to address the long-term sustainability of our overseas operations.",
-                    kor: "이사회는 최근 해외 사업부의 장기적인 지속 가능성 문제를 다루기 위해 다가오는 전략 기획 수련회에 모든 고위 경영진이 참석하는 것이 의무적이라고 발표했습니다."
-                },
-                {
-                    eng: "In accordance with the new safety regulations, the installation of advanced fire suppression systems has become <b>mandatory</b> for all commercial buildings exceeding ten stories in height to ensure the safety of all occupants.",
-                    kor: "새로운 안전 규정에 따라, 모든 거주자의 안전을 보장하기 위해 10층을 초과하는 모든 상업용 건물에 고급 화재 억제 시스템을 설치하는 것이 의무화되었습니다."
-                }
+                {eng: "It is <b>mandatory</b> for all employees to attend the safety workshop.", kor: "모든 직원이 안전 워크숍에 참석하는 것은 의무입니다."},
+                {eng: "The use of seat belts is <b>mandatory</b> even in the back seat.", kor: "뒷좌석에서도 안전벨트 착용은 필수입니다."},
+                {eng: "There are several <b>mandatory</b> courses for freshmen.", kor: "신입생들을 위한 몇 개의 필수 과목들이 있습니다."}
             ]
         ],
         [
-            "Incentive", "동기, 혜택, 장려금",
+            "Incentive", "/ɪnˈsentɪv/", "동기, 혜택, 장려금",
             [
-                {
-                    eng: "To encourage innovation within the organization, the company has implemented a performance-based <b>incentive</b> scheme that rewards employees who develop cost-cutting measures or improve operational efficiency.",
-                    kor: "조직 내 혁신을 장려하기 위해, 회사는 비용 절감 방안을 개발하거나 운영 효율성을 개선하는 직원들에게 보상하는 성과 기반 인센티브 제도를 시행했습니다."
-                },
-                {
-                    eng: "Economists argue that the government should provide a substantial tax <b>incentive</b> to corporations that invest heavily in renewable energy research and development to accelerate the transition to a green economy.",
-                    kor: "경제학자들은 친환경 경제로의 전환을 가속화하기 위해 재생 에너지 연구 개발에 집중 투자하는 기업들에게 정부가 상당한 세제 혜택을 제공해야 한다고 주장합니다."
-                }
+                {eng: "The company offers a tax <b>incentive</b> for small businesses.", kor: "회사는 소상공인들을 위해 세제 혜택을 제공합니다."},
+                {eng: "Bonus payments provide a strong <b>incentive</b> to work harder.", kor: "보너스 지급은 더 열심히 일하게 하는 강력한 동기를 부여합니다."}
             ]
         ]
     ];
 
     let currentIndex = 0;
+    let starredWords = JSON.parse(localStorage.getItem('starredWords')) || [];
 
     function displayWord() {
         const data = vocaData[currentIndex];
         document.getElementById('wordMain').innerText = data[0];
-        document.getElementById('meaning').innerText = data[1];
+        document.getElementById('wordPhonetic').innerText = data[1];
+        document.getElementById('meaning').innerText = data[2];
+
+        document.getElementById('starBtn').classList.toggle('active', starredWords.includes(data[0]));
 
         const listDiv = document.getElementById('exampleList');
         listDiv.innerHTML = '';
 
-        data[2].forEach((ex, idx) => {
+        data[3].forEach((ex, idx) => {
             const card = document.createElement('div');
             card.className = 'example-card';
             card.innerHTML = `
+                <span class="speak-icon" onclick="speak('${ex.eng.replace(/<b>|<\/b>/g, "")}')">🔊</span>
                 <div class="ex-eng" onclick="speak(this.innerText)">${ex.eng}</div>
-                <div class="btn-show-kor" onclick="toggleKor(${idx})">▼ 해석 보기/숨기기</div>
-                <div id="kor-${idx}" class="ex-kor">${ex.kor}</div>
+                <div class="ex-kor" title="마우스를 올리면 해석이 보입니다">${ex.kor}</div>
             `;
             listDiv.appendChild(card);
         });
@@ -115,13 +120,8 @@
         input.value = '';
         input.className = 'typing-input';
         document.getElementById('nextBtn').classList.remove('active');
-        document.getElementById('wordCounter').innerText = `[ADVANCED TOEIC] ${currentIndex + 1} / ${vocaData.length}`;
+        document.getElementById('wordCounter').innerText = `WORD ${currentIndex + 1} / ${vocaData.length}`;
         input.focus();
-    }
-
-    function toggleKor(idx) {
-        const target = document.getElementById(`kor-${idx}`);
-        target.style.display = (target.style.display === 'block') ? 'none' : 'block';
     }
 
     function checkTest() {
@@ -136,11 +136,20 @@
         }
     }
 
+    // 엔터키 처리
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && document.getElementById('nextBtn').classList.contains('active')) {
             loadNextWord();
         }
     });
+
+    function toggleStar() {
+        const word = vocaData[currentIndex][0];
+        if (starredWords.includes(word)) starredWords = starredWords.filter(w => w !== word);
+        else starredWords.push(word);
+        localStorage.setItem('starredWords', JSON.stringify(starredWords));
+        document.getElementById('starBtn').classList.toggle('active');
+    }
 
     function loadNextWord() {
         currentIndex = (currentIndex + 1) % vocaData.length;
@@ -151,7 +160,7 @@
         window.speechSynthesis.cancel();
         const speech = new SpeechSynthesisUtterance(text);
         speech.lang = 'en-US';
-        speech.rate = 0.85; // 장문이므로 약간 천천히 읽어줌
+        speech.rate = 0.9;
         window.speechSynthesis.speak(speech);
     }
 
