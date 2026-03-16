@@ -36,15 +36,32 @@
         .btn-pass:hover { color: #7f8c8d; }
 
         .hint-text { font-size: 0.8rem; color: #a0aec0; margin-top: 10px; }
+
+        /* 토글 스위치 스타일 */
+.switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #e74c3c; }
+input:checked + .slider:before { transform: translateX(18px); }
+
     </style>
 </head>
 <body>
 
 <div class="voca-container">
+
     <div class="header">
-        <span id="starBtn" class="star-btn" onclick="toggleStar()">★</span>
-        <div id="wordCounter" style="font-size: 0.9rem; font-weight: bold;">1 / 10</div>
+    <span id="starBtn" class="star-btn" onclick="toggleStar()">★</span>
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 0.8rem; font-weight: bold; color: #718096;">RANDOM</span>
+        <label class="switch">
+            <input type="checkbox" id="randomToggle" onchange="handleRandomToggle()">
+            <span class="slider"></span>
+        </label>
     </div>
+    <div id="wordCounter" style="font-size: 0.9rem; font-weight: bold;">1 / 10</div>
+</div>
 
     <div class="study-section">
         <div id="wordMain" class="word-main" onclick="speak(this.innerText)">Word</div>
@@ -210,102 +227,134 @@ const vocaData = [
         ]
     ];
 
-    let currentIndex = 0;
-    let starredWords = JSON.parse(localStorage.getItem('starredWords')) || [];
 
-    function displayWord() {
-        const data = vocaData[currentIndex];
-        document.getElementById('wordMain').innerText = data[0];
-        document.getElementById('wordPhonetic').innerText = data[1];
-        document.getElementById('meaning').innerText = data[2];
 
-        document.getElementById('starBtn').classList.toggle('active', starredWords.includes(data[0]));
+// 1. 데이터 및 상태 변수
+let currentIndex = 0;
+let starredWords = JSON.parse(localStorage.getItem('starredWords')) || [];
+let displayData = [...vocaData]; // 화면에 표시할 데이터 (원본 복사)
 
-        const exampleListDiv = document.getElementById('exampleList');
-        exampleListDiv.innerHTML = '';
-        data[3].forEach(ex => {
-            const item = document.createElement('div');
-            item.className = 'example-item';
-            item.innerHTML = `
-                <div class="ex-eng" onclick="speak(this.innerText)">${ex.eng}</div>
-                <div class="ex-kor">${ex.kor}</div>
-            `;
-            exampleListDiv.appendChild(item);
-        });
+// 2. 초기 로드 함수
+window.onload = () => {
+    displayWord();
+};
 
-        const input = document.getElementById('userInput');
-        input.value = '';
-        input.className = 'typing-input';
-        document.getElementById('nextBtn').classList.remove('active');
-        document.getElementById('wordCounter').innerText = `${currentIndex + 1} / ${vocaData.length}`;
+// 3. 랜덤 토글 핸들러 (중복 방지 및 모드 전환)
+function handleRandomToggle() {
+    const isRandom = document.getElementById('randomToggle').checked;
 
-        // 메시지 초기화
-        document.getElementById('testMsg').innerText = "단어를 정확히 입력해야 '다음' 버튼이 활성화됩니다.";
-        document.getElementById('testMsg').style.color = "#a0aec0";
-
-        input.focus();
+    if (isRandom) {
+        // 랜덤 모드: 현재 데이터를 무작위로 섞음
+        shuffleArray(displayData);
+    } else {
+        // 순차 모드: 원본 데이터 순서로 복구
+        displayData = [...vocaData];
     }
 
-    function checkTest() {
-        const input = document.getElementById('userInput');
-        const targetWord = vocaData[currentIndex][0].toLowerCase();
-        const currentInput = input.value.toLowerCase();
-        const nextBtn = document.getElementById('nextBtn');
+    currentIndex = 0; // 모드 변경 시 처음부터 시작
+    displayWord();
+}
 
-        if (currentInput === targetWord) {
-            input.className = 'typing-input correct';
-            nextBtn.classList.add('active');
-            document.getElementById('testMsg').innerText = "통과! [Enter]를 누르거나 버튼을 클릭하세요.";
-            document.getElementById('testMsg').style.color = "#2ecc71";
-        } else {
-            input.className = 'typing-input';
-            nextBtn.classList.remove('active');
-            document.getElementById('testMsg').innerText = "단어를 정확히 입력해야 '다음' 버튼이 활성화됩니다.";
-            document.getElementById('testMsg').style.color = "#a0aec0";
-        }
+// 4. 배열 섞기 로직 (Fisher-Yates)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
+}
 
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const nextBtn = document.getElementById('nextBtn');
-            if (nextBtn.classList.contains('active')) {
-                loadNextWord();
-            }
-        }
+// 5. 단어 표시 함수 (vocaData 대신 displayData 참조)
+function displayWord() {
+    const data = displayData[currentIndex];
+    document.getElementById('wordMain').innerText = data[0];
+    document.getElementById('wordPhonetic').innerText = data[1];
+    document.getElementById('meaning').innerText = data[2];
+
+    document.getElementById('starBtn').classList.toggle('active', starredWords.includes(data[0]));
+
+    const exampleListDiv = document.getElementById('exampleList');
+    exampleListDiv.innerHTML = '';
+    data[3].forEach(ex => {
+        const item = document.createElement('div');
+        item.className = 'example-item';
+        item.innerHTML = `
+            <div class="ex-eng" onclick="speak(this.innerText)">${ex.eng}</div>
+            <div class="ex-kor">${ex.kor}</div>
+        `;
+        exampleListDiv.appendChild(item);
     });
 
-    function toggleStar() {
-        const word = vocaData[currentIndex][0];
-        if (starredWords.includes(word)) {
-            starredWords = starredWords.filter(w => w !== word);
-        } else {
-            starredWords.push(word);
-        }
-        localStorage.setItem('starredWords', JSON.stringify(starredWords));
-        document.getElementById('starBtn').classList.toggle('active');
+    const input = document.getElementById('userInput');
+    input.value = '';
+    input.className = 'typing-input';
+    document.getElementById('nextBtn').classList.remove('active');
+    document.getElementById('wordCounter').innerText = `${currentIndex + 1} / ${displayData.length}`;
+
+    document.getElementById('testMsg').innerText = "단어를 정확히 입력해야 '다음' 버튼이 활성화됩니다.";
+    document.getElementById('testMsg').style.color = "#a0aec0";
+
+    input.focus();
+}
+
+// 6. 기타 보조 기능 (기존과 동일하지만 displayData 참조하도록 유지)
+function checkTest() {
+    const input = document.getElementById('userInput');
+    const targetWord = displayData[currentIndex][0].toLowerCase();
+    const currentInput = input.value.toLowerCase();
+    const nextBtn = document.getElementById('nextBtn');
+
+    if (currentInput === targetWord) {
+        input.className = 'typing-input correct';
+        nextBtn.classList.add('active');
+        document.getElementById('testMsg').innerText = "통과! [Enter]를 누르거나 버튼을 클릭하세요.";
+        document.getElementById('testMsg').style.color = "#2ecc71";
+    } else {
+        input.className = 'typing-input';
+        nextBtn.classList.remove('active');
+        document.getElementById('testMsg').innerText = "단어를 정확히 입력해야 '다음' 버튼이 활성화됩니다.";
+        document.getElementById('testMsg').style.color = "#a0aec0";
     }
+}
 
-    function loadNextWord() {
-        currentIndex = (currentIndex + 1) % vocaData.length;
-        displayWord();
-    }
-
-    function speak(text) {
-        window.speechSynthesis.cancel();
-        const speech = new SpeechSynthesisUtterance(text);
-        speech.lang = 'en-US';
-        speech.rate = 0.9;
-        window.speechSynthesis.speak(speech);
-    }
-
-    window.onload = displayWord;
-
+function loadNextWord() {
+    currentIndex = (currentIndex + 1) % displayData.length;
+    displayWord();
+}
 
 function goToConv() {
-    const word = vocaData[currentIndex][0];
-    // 같은 폴더에 conversation.html이 있어야 합니다.
+    const word = displayData[currentIndex][0];
     location.href = `conversation.html?word=${word}`;
 }
+
+function toggleStar() {
+    const word = displayData[currentIndex][0];
+    if (starredWords.includes(word)) {
+        starredWords = starredWords.filter(w => w !== word);
+    } else {
+        starredWords.push(word);
+    }
+    localStorage.setItem('starredWords', JSON.stringify(starredWords));
+    document.getElementById('starBtn').classList.toggle('active');
+}
+
+function speak(text) {
+    window.speechSynthesis.cancel();
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = 'en-US';
+    speech.rate = 0.9;
+    window.speechSynthesis.speak(speech);
+}
+
+// 엔터키 이벤트 리스너
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const nextBtn = document.getElementById('nextBtn');
+        if (nextBtn.classList.contains('active')) {
+            loadNextWord();
+        }
+    }
+});
+
 
 </script>
 </body>
