@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC Word Master</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        .voca-container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 500px; box-sizing: border-box; }
+
+        /* 헤더 부분 */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #e74c3c; padding-bottom: 10px; }
+        .header h1 { font-size: 1.5rem; color: #2c3e50; margin: 0; }
+        .mode-badge { font-size: 0.7rem; background: #e74c3c; color: white; padding: 3px 8px; border-radius: 20px; }
+
+        /* 단어 카드 스타일 */
+        .word-card { text-align: center; min-height: 250px; display: flex; flex-direction: column; justify-content: center; }
+        .word-main { font-size: 2.5rem; font-weight: 800; color: #e74c3c; margin-bottom: 10px; cursor: pointer; }
+        .word-phonetic { font-size: 1rem; color: #7f8c8d; margin-bottom: 20px; }
+
+        .answer-box { display: none; background: #fff5f5; border-radius: 10px; padding: 20px; margin-top: 10px; text-align: left; border: 1px solid #fed7d7; }
+        .meaning { font-size: 1.2rem; font-weight: bold; color: #c53030; margin-bottom: 15px; }
+        .example-set { margin-bottom: 15px; padding-left: 10px; border-left: 3px solid #feb2b2; }
+        .ex-eng { font-size: 1rem; color: #2d3748; font-style: italic; line-height: 1.4; cursor: pointer; }
+        .ex-kor { font-size: 0.9rem; color: #718096; margin-top: 5px; }
+
+        /* 버튼 그룹 */
+        .btn-group { display: flex; gap: 10px; margin-top: 30px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
+        .btn-check { background-color: #4a5568; color: white; }
+        .btn-next { background-color: #e74c3c; color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .nav-info { margin-top: 15px; font-size: 0.8rem; color: #a0aec0; }
+    </style>
+</head>
+<body>
+
+<div class="voca-container">
+    <div class="header">
+        <h1>📕 TOEIC Master</h1>
+        <div id="wordCounter" class="mode-badge">1 / 100</div>
+    </div>
+
+    <div class="word-card">
+        <div id="wordMain" class="word-main" onclick="speak(this.innerText)">Word</div>
+        <div id="wordPhonetic" class="word-phonetic">/wɜːrd/</div>
+
+        <div id="answerBox" class="answer-box">
+            <div id="meaning" class="meaning">뜻</div>
+            <div class="example-set">
+                <div id="exEng" class="ex-eng" onclick="speak(this.innerText)">This is an example sentence.</div>
+                <div id="exKor" class="ex-kor">이것은 예문입니다.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-check" onclick="toggleAnswer()">뜻 보기 / 숨기기</button>
+        <button class="btn-next" onclick="loadNextWord()">다음 단어</button>
+    </div>
+
+    <div class="nav-info">단어 혹은 예문을 클릭하면 발음이 나옵니다.</div>
+</div>
+
+<script>
+    // [단어, 발음기호, 뜻, 예문영어, 예문해석]
+    const vocaData = [
+        ["Procrastinate", "/prəˈkræstɪneɪt/", "미루다, 지연하다", "Don't procrastinate on your TOEIC studies.", "토익 공부를 미루지 마세요."],
+        ["Incentive", "/ɪnˈsentɪv/", "혜택, 장려금, 동기", "The company offers a cash incentive for perfect attendance.", "회사는 만근에 대해 현금 포상금을 제공합니다."],
+        ["Mandatory", "/ˈmændətɔːri/", "의무적인, 필수의", "Attendance at the orientation is mandatory.", "오리엔테이션 참석은 필수입니다."],
+        ["Collaborate", "/kəˈlæbəreɪt/", "협력하다, 공동으로 작업하다", "We need to collaborate with the marketing department.", "우리는 마케팅 부서와 협력해야 합니다."]
+    ];
+
+    let currentIndex = 0;
+
+    function loadNextWord() {
+        currentIndex = (currentIndex + 1) % vocaData.length;
+        displayWord();
+    }
+
+    function displayWord() {
+        const data = vocaData[currentIndex];
+        document.getElementById('wordMain').innerText = data[0];
+        document.getElementById('wordPhonetic').innerText = data[1];
+        document.getElementById('meaning').innerText = data[2];
+        document.getElementById('exEng').innerText = data[3];
+        document.getElementById('exKor').innerText = data[4];
+
+        document.getElementById('answerBox').style.display = 'none';
+        document.getElementById('wordCounter').innerText = `${currentIndex + 1} / ${vocaData.length}`;
+
+        // 새 단어 나오면 자동으로 단어 읽어주기 (선택 사항)
+        // speak(data[0]);
+    }
+
+    function toggleAnswer() {
+        const box = document.getElementById('answerBox');
+        box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.lang = 'en-US';
+        speech.rate = 0.8; // 조금 천천히
+
+        // 고품질 목소리 선택 (브라우저 지원 환경에 따라 다름)
+        const voices = window.speechSynthesis.getVoices();
+        const googleVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('en'));
+        if (googleVoice) speech.voice = googleVoice;
+
+        window.speechSynthesis.speak(speech);
+    }
+
+    // 초기 실행
+    window.onload = () => {
+        displayWord();
+        // 브라우저 보이스 로딩 대기
+        window.speechSynthesis.getVoices();
+    };
+</script>
+
+</body>
+</html>
