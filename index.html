@@ -4,96 +4,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOEIC Word Master - Multi Examples</title>
+    <title>TOEIC Master - Pro</title>
     <style>
-        /* 기존 스타일 유지 및 예문 레이아웃 보강 */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .voca-container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 550px; box-sizing: border-box; }
+        /* 기존 스타일 유지 */
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .voca-container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 550px; }
 
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #e74c3c; padding-bottom: 10px; }
-        .header h1 { font-size: 1.5rem; color: #2c3e50; margin: 0; }
-        .mode-badge { font-size: 0.75rem; background: #e74c3c; color: white; padding: 4px 10px; border-radius: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e74c3c; padding-bottom: 10px; }
 
-        .word-card { text-align: center; min-height: 300px; }
-        .word-main { font-size: 2.8rem; font-weight: 800; color: #e74c3c; margin-bottom: 5px; cursor: pointer; letter-spacing: -1px; }
-        .word-phonetic { font-size: 1.1rem; color: #7f8c8d; margin-bottom: 25px; font-family: 'Arial', sans-serif; }
+        /* 별표(오답노트) 스타일 */
+        .star-btn { cursor: pointer; font-size: 1.5rem; color: #ddd; transition: 0.2s; }
+        .star-btn.active { color: #f1c40f; }
 
-        .answer-box { display: none; text-align: left; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* 타이핑 영역 스타일 */
+        .typing-section { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px; text-align: center; }
+        .typing-input { width: 80%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 1.1rem; text-align: center; outline: none; }
+        .typing-input.correct { border-color: #2ecc71; background-color: #eafaf1; }
+        .typing-input.wrong { border-color: #e74c3c; background-color: #fdedec; }
 
-        .meaning { font-size: 1.3rem; font-weight: bold; color: #c53030; margin-bottom: 20px; padding: 10px; background: #fff5f5; border-radius: 8px; text-align: center; }
+        .answer-box { display: none; margin-top: 20px; }
+        .meaning { font-size: 1.3rem; font-weight: bold; color: #c53030; background: #fff5f5; padding: 10px; border-radius: 8px; text-align: center; }
+        .example-item { margin-top: 15px; padding-left: 12px; border-left: 4px solid #feb2b2; }
+        .ex-eng { cursor: pointer; color: #2d3748; }
 
-        /* 예문 스타일 */
-        .example-container { margin-top: 15px; }
-        .example-item { margin-bottom: 18px; padding-left: 12px; border-left: 4px solid #feb2b2; position: relative; }
-        .ex-label { font-size: 0.7rem; color: #e74c3c; font-weight: bold; margin-bottom: 3px; display: block; }
-        .ex-eng { font-size: 1.05rem; color: #2d3748; line-height: 1.5; cursor: pointer; transition: 0.2s; }
-        .ex-eng:hover { color: #e74c3c; }
-        .ex-kor { font-size: 0.9rem; color: #718096; margin-top: 4px; }
-
-        .btn-group { display: flex; gap: 10px; margin-top: 30px; }
-        button { flex: 1; padding: 16px; border: none; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
+        .btn-group { display: flex; gap: 10px; margin-top: 25px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; }
         .btn-check { background-color: #4a5568; color: white; }
         .btn-next { background-color: #e74c3c; color: white; }
-        button:active { transform: scale(0.98); }
-
-        .nav-info { margin-top: 20px; font-size: 0.85rem; color: #a0aec0; text-align: center; line-height: 1.4; }
     </style>
 </head>
 <body>
 
 <div class="voca-container">
     <div class="header">
-        <h1>📕 TOEIC Master</h1>
-        <div id="wordCounter" class="mode-badge">1 / 4</div>
+        <span id="starBtn" class="star-btn" onclick="toggleStar()">★</span>
+        <h1 style="font-size: 1.2rem; margin:0;">TOEIC Pro Master</h1>
+        <div id="wordCounter" style="font-size: 0.8rem; color: #666;">1 / 3</div>
     </div>
 
-    <div class="word-card">
-        <div id="wordMain" class="word-main" onclick="speak(this.innerText)">Word</div>
-        <div id="wordPhonetic" class="word-phonetic">/wɜːrd/</div>
+    <div style="text-align: center;">
+        <div id="wordPhonetic" style="color: #7f8c8d; margin-bottom: 10px;">/발음기호/</div>
 
-        <div id="answerBox" class="answer-box">
-            <div id="meaning" class="meaning">뜻</div>
-            <div id="exampleList" class="example-container">
-                </div>
+        <div class="typing-section">
+            <input type="text" id="userInput" class="typing-input" placeholder="단어를 입력하세요" autocomplete="off" onkeyup="checkTyping(event)">
+            <div id="typingMsg" style="font-size: 0.8rem; margin-top: 5px; height: 15px;"></div>
         </div>
     </div>
 
-    <div class="btn-group">
-        <button class="btn-check" onclick="toggleAnswer()">뜻 / 예문 보기</button>
-        <button class="btn-next" onclick="loadNextWord()">다음 단어</button>
+    <div id="answerBox" class="answer-box">
+        <div id="wordMain" style="font-size: 2rem; font-weight: bold; color: #e74c3c; text-align: center; cursor: pointer;" onclick="speak(this.innerText)">Word</div>
+        <div id="meaning" class="meaning">뜻</div>
+        <div id="exampleList"></div>
     </div>
 
-    <div class="nav-info">단어/예문을 누르면 발음이 나옵니다.<br>예문을 많이 보고 입으로 따라 해보세요!</div>
+    <div class="btn-group">
+        <button class="btn-check" onclick="toggleAnswer()">정답 확인 (Space)</button>
+        <button class="btn-next" onclick="loadNextWord()">다음 (Enter)</button>
+    </div>
 </div>
 
 <script>
-    // 데이터 구조: [단어, 발음, 뜻, [ {eng:"예문1", kor:"해석1"}, {eng:"예문2", kor:"해석2"} ]]
     const vocaData = [
-        [
-            "Procrastinate", "/prəˈkræstɪneɪt/", "미루다, 지연하다",
-            [
-                {eng: "When you procrastinate, you turn a small chore into a large disaster.", kor: "할 일을 미루면 작은 허드렛일이 큰 재앙이 됩니다."},
-                {eng: "Stop procrastinating and start working on your report.", kor: "그만 미루고 보고서 작성을 시작하세요."}
-            ]
-        ],
-        [
-            "Incentive", "/ɪnˈsentɪv/", "혜택, 장려금, 동기",
-            [
-                {eng: "The company offers a cash incentive for employees who exceed their targets.", kor: "회사는 목표를 달성한 직원들에게 현금 인센티브를 제공합니다."},
-                {eng: "There is little incentive for people to save money when interest rates are low.", kor: "금리가 낮을 때는 사람들이 저축할 동기가 거의 없습니다."}
-            ]
-        ],
-        [
-            "Mandatory", "/ˈmændətɔːri/", "의무적인, 필수의",
-            [
-                {eng: "The use of seat belts is mandatory for all passengers.", kor: "모든 탑승객의 안전벨트 착용은 의무입니다."},
-                {eng: "It is mandatory to attend the safety training session.", kor: "안전 교육 세션에 참석하는 것은 필수입니다."}
-            ]
-        ]
+        ["Procrastinate", "/prəˈkræstɪneɪt/", "미루다, 지연하다", [{eng: "Don't procrastinate.", kor: "미루지 마세요."}]],
+        ["Incentive", "/ɪnˈsentɪv/", "혜택, 동기", [{eng: "Cash incentive.", kor: "현금 인센티브."}]],
+        ["Mandatory", "/ˈmændətɔːri/", "의무적인", [{eng: "It is mandatory.", kor: "그것은 의무입니다."}]]
     ];
 
     let currentIndex = 0;
+    let starredWords = JSON.parse(localStorage.getItem('starredWords')) || [];
 
     function displayWord() {
         const data = vocaData[currentIndex];
@@ -101,23 +79,61 @@
         document.getElementById('wordPhonetic').innerText = data[1];
         document.getElementById('meaning').innerText = data[2];
 
-        // 예문 리스트 생성
-        const exampleListDiv = document.getElementById('exampleList');
-        exampleListDiv.innerHTML = ''; // 기존 예문 비우기
+        // 오답노트(별표) 상태 확인
+        const starBtn = document.getElementById('starBtn');
+        starBtn.classList.toggle('active', starredWords.includes(data[0]));
 
-        data[3].forEach((ex, index) => {
+        // 예문 로드
+        const exampleListDiv = document.getElementById('exampleList');
+        exampleListDiv.innerHTML = '';
+        data[3].forEach(ex => {
             const item = document.createElement('div');
             item.className = 'example-item';
-            item.innerHTML = `
-                <span class="ex-label">EXAMPLE ${index + 1}</span>
-                <div class="ex-eng" onclick="speak(this.innerText)">${ex.eng}</div>
-                <div class="ex-kor">${ex.kor}</div>
-            `;
+            item.innerHTML = `<div class="ex-eng" onclick="speak(this.innerText)">${ex.eng}</div><div style="font-size:0.8rem; color:#666;">${ex.kor}</div>`;
             exampleListDiv.appendChild(item);
         });
 
+        // 입력창 초기화
+        const input = document.getElementById('userInput');
+        input.value = '';
+        input.className = 'typing-input';
+        document.getElementById('typingMsg').innerText = '';
         document.getElementById('answerBox').style.display = 'none';
         document.getElementById('wordCounter').innerText = `${currentIndex + 1} / ${vocaData.length}`;
+        input.focus();
+    }
+
+    // 타이핑 실시간 체크
+    function checkTyping(event) {
+        const input = document.getElementById('userInput');
+        const targetWord = vocaData[currentIndex][0].toLowerCase();
+        const currentInput = input.value.toLowerCase();
+
+        if (currentInput === targetWord) {
+            input.className = 'typing-input correct';
+            document.getElementById('typingMsg').innerText = "정답입니다! 소리를 들어보세요.";
+            document.getElementById('typingMsg').style.color = "#2ecc71";
+            toggleAnswer(true); // 정답이면 자동으로 뜻 보여주기
+            speak(vocaData[currentIndex][0]);
+        } else if (currentInput.length >= targetWord.length) {
+            input.className = 'typing-input wrong';
+        }
+
+        if (event.key === 'Enter' && currentInput === targetWord) {
+            loadNextWord();
+        }
+    }
+
+    // 별표 토글 (오답노트 저장)
+    function toggleStar() {
+        const word = vocaData[currentIndex][0];
+        if (starredWords.includes(word)) {
+            starredWords = starredWords.filter(w => w !== word);
+        } else {
+            starredWords.push(word);
+        }
+        localStorage.setItem('starredWords', JSON.stringify(starredWords));
+        document.getElementById('starBtn').classList.toggle('active');
     }
 
     function loadNextWord() {
@@ -125,29 +141,19 @@
         displayWord();
     }
 
-    function toggleAnswer() {
+    function toggleAnswer(forceOpen = false) {
         const box = document.getElementById('answerBox');
-        box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+        box.style.display = forceOpen ? 'block' : (box.style.display === 'block' ? 'none' : 'block');
     }
 
     function speak(text) {
         window.speechSynthesis.cancel();
         const speech = new SpeechSynthesisUtterance(text);
         speech.lang = 'en-US';
-        speech.rate = 0.85;
-
-        const voices = window.speechSynthesis.getVoices();
-        const googleVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('en'));
-        if (googleVoice) speech.voice = googleVoice;
-
         window.speechSynthesis.speak(speech);
     }
 
-    window.onload = () => {
-        displayWord();
-        window.speechSynthesis.getVoices();
-    };
+    window.onload = displayWord;
 </script>
-
 </body>
 </html>
