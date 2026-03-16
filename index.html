@@ -4,33 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOEIC Master - Pro</title>
+    <title>TOEIC Gate Keeper</title>
     <style>
-        /* 기존 스타일 유지 */
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .voca-container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 550px; }
+        .voca-container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 550px; position: relative; }
 
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e74c3c; padding-bottom: 10px; }
-
-        /* 별표(오답노트) 스타일 */
-        .star-btn { cursor: pointer; font-size: 1.5rem; color: #ddd; transition: 0.2s; }
+        .star-btn { cursor: pointer; font-size: 1.5rem; color: #ddd; }
         .star-btn.active { color: #f1c40f; }
 
-        /* 타이핑 영역 스타일 */
-        .typing-section { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px; text-align: center; }
-        .typing-input { width: 80%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 1.1rem; text-align: center; outline: none; }
+        /* 학습 영역 */
+        .study-section { text-align: center; margin-bottom: 20px; }
+        .word-main { font-size: 2.5rem; font-weight: 800; color: #e74c3c; cursor: pointer; }
+        .meaning-box { background: #fff5f5; padding: 15px; border-radius: 10px; margin: 15px 0; font-weight: bold; font-size: 1.2rem; color: #c53030; }
+
+        .example-item { text-align: left; margin-top: 12px; padding-left: 10px; border-left: 3px solid #feb2b2; }
+        .ex-eng { cursor: pointer; color: #2d3748; font-style: italic; font-size: 0.95rem; }
+        .ex-kor { font-size: 0.85rem; color: #718096; margin-top: 3px; }
+
+        /* 타이핑 테스트 영역 */
+        .test-section { margin-top: 30px; padding-top: 20px; border-top: 1px dashed #ddd; text-align: center; }
+        .typing-input { width: 90%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; text-align: center; outline: none; transition: 0.3s; }
         .typing-input.correct { border-color: #2ecc71; background-color: #eafaf1; }
-        .typing-input.wrong { border-color: #e74c3c; background-color: #fdedec; }
+        .typing-input:focus { border-color: #3498db; }
 
-        .answer-box { display: none; margin-top: 20px; }
-        .meaning { font-size: 1.3rem; font-weight: bold; color: #c53030; background: #fff5f5; padding: 10px; border-radius: 8px; text-align: center; }
-        .example-item { margin-top: 15px; padding-left: 12px; border-left: 4px solid #feb2b2; }
-        .ex-eng { cursor: pointer; color: #2d3748; }
+        .btn-next { width: 100%; margin-top: 20px; padding: 15px; border: none; border-radius: 12px; background-color: #e74c3c; color: white; font-weight: bold; cursor: pointer; opacity: 0.5; pointer-events: none; }
+        .btn-next.active { opacity: 1; pointer-events: auto; }
 
-        .btn-group { display: flex; gap: 10px; margin-top: 25px; }
-        button { flex: 1; padding: 15px; border: none; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; }
-        .btn-check { background-color: #4a5568; color: white; }
-        .btn-next { background-color: #e74c3c; color: white; }
+        .hint-text { font-size: 0.8rem; color: #a0aec0; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -38,36 +39,43 @@
 <div class="voca-container">
     <div class="header">
         <span id="starBtn" class="star-btn" onclick="toggleStar()">★</span>
-        <h1 style="font-size: 1.2rem; margin:0;">TOEIC Pro Master</h1>
-        <div id="wordCounter" style="font-size: 0.8rem; color: #666;">1 / 3</div>
+        <div id="wordCounter" style="font-size: 0.9rem; font-weight: bold;">1 / 10</div>
     </div>
 
-    <div style="text-align: center;">
-        <div id="wordPhonetic" style="color: #7f8c8d; margin-bottom: 10px;">/발음기호/</div>
+    <div class="study-section">
+        <div id="wordMain" class="word-main" onclick="speak(this.innerText)">Word</div>
+        <div id="wordPhonetic" style="color:#7f8c8d;">/phonetic/</div>
+        <div class="meaning-box" id="meaning">의미</div>
 
-        <div class="typing-section">
-            <input type="text" id="userInput" class="typing-input" placeholder="단어를 입력하세요" autocomplete="off" onkeyup="checkTyping(event)">
-            <div id="typingMsg" style="font-size: 0.8rem; margin-top: 5px; height: 15px;"></div>
-        </div>
+        <div id="exampleList">
+            </div>
     </div>
 
-    <div id="answerBox" class="answer-box">
-        <div id="wordMain" style="font-size: 2rem; font-weight: bold; color: #e74c3c; text-align: center; cursor: pointer;" onclick="speak(this.innerText)">Word</div>
-        <div id="meaning" class="meaning">뜻</div>
-        <div id="exampleList"></div>
+    <div class="test-section">
+        <div style="font-size: 0.9rem; margin-bottom: 10px; font-weight: bold; color: #4a5568;">▼ 위 단어를 똑같이 입력하세요 (테스트)</div>
+        <input type="text" id="userInput" class="typing-input" placeholder="스펠링을 입력하세요" autocomplete="off" oninput="checkTest()">
+        <div id="testMsg" class="hint-text">단어를 정확히 입력해야 '다음' 버튼이 활성화됩니다.</div>
     </div>
 
-    <div class="btn-group">
-        <button class="btn-check" onclick="toggleAnswer()">정답 확인 (Space)</button>
-        <button class="btn-next" onclick="loadNextWord()">다음 (Enter)</button>
-    </div>
+    <button id="nextBtn" class="btn-next" onclick="loadNextWord()">다음 단어로 넘어가기 (Enter)</button>
 </div>
 
 <script>
     const vocaData = [
-        ["Procrastinate", "/prəˈkræstɪneɪt/", "미루다, 지연하다", [{eng: "Don't procrastinate.", kor: "미루지 마세요."}]],
-        ["Incentive", "/ɪnˈsentɪv/", "혜택, 동기", [{eng: "Cash incentive.", kor: "현금 인센티브."}]],
-        ["Mandatory", "/ˈmændətɔːri/", "의무적인", [{eng: "It is mandatory.", kor: "그것은 의무입니다."}]]
+        [
+            "Procrastinate", "/prəˈkræstɪneɪt/", "미루다, 지연하다",
+            [
+                {eng: "Success comes to those who don't procrastinate.", kor: "성공은 미루지 않는 자들에게 옵니다."},
+                {eng: "Stop procrastinating and take action now.", kor: "미루는 것을 멈추고 지금 행동하세요."}
+            ]
+        ],
+        [
+            "Incentive", "/ɪnˈsentɪv/", "혜택, 동기, 장려금",
+            [
+                {eng: "The bonus is a great incentive for the team.", kor: "보너스는 팀에게 큰 동기부여가 됩니다."},
+                {eng: "There is no incentive to work harder.", kor: "더 열심히 일할 유인이 없습니다."}
+            ]
+        ]
     ];
 
     let currentIndex = 0;
@@ -79,52 +87,61 @@
         document.getElementById('wordPhonetic').innerText = data[1];
         document.getElementById('meaning').innerText = data[2];
 
-        // 오답노트(별표) 상태 확인
-        const starBtn = document.getElementById('starBtn');
-        starBtn.classList.toggle('active', starredWords.includes(data[0]));
+        // 오답노트 상태
+        document.getElementById('starBtn').classList.toggle('active', starredWords.includes(data[0]));
 
-        // 예문 로드
+        // 예문 로드 (무조건 2개 이상 지원)
         const exampleListDiv = document.getElementById('exampleList');
         exampleListDiv.innerHTML = '';
         data[3].forEach(ex => {
             const item = document.createElement('div');
             item.className = 'example-item';
-            item.innerHTML = `<div class="ex-eng" onclick="speak(this.innerText)">${ex.eng}</div><div style="font-size:0.8rem; color:#666;">${ex.kor}</div>`;
+            item.innerHTML = `
+                <div class="ex-eng" onclick="speak(this.innerText)">${ex.eng}</div>
+                <div class="ex-kor">${ex.kor}</div>
+            `;
             exampleListDiv.appendChild(item);
         });
 
-        // 입력창 초기화
+        // 테스트 초기화
         const input = document.getElementById('userInput');
         input.value = '';
         input.className = 'typing-input';
-        document.getElementById('typingMsg').innerText = '';
-        document.getElementById('answerBox').style.display = 'none';
+        document.getElementById('nextBtn').classList.remove('active');
         document.getElementById('wordCounter').innerText = `${currentIndex + 1} / ${vocaData.length}`;
         input.focus();
     }
 
-    // 타이핑 실시간 체크
-    function checkTyping(event) {
+    // 테스트 체크 로직
+    function checkTest() {
         const input = document.getElementById('userInput');
         const targetWord = vocaData[currentIndex][0].toLowerCase();
         const currentInput = input.value.toLowerCase();
+        const nextBtn = document.getElementById('nextBtn');
 
         if (currentInput === targetWord) {
             input.className = 'typing-input correct';
-            document.getElementById('typingMsg').innerText = "정답입니다! 소리를 들어보세요.";
-            document.getElementById('typingMsg').style.color = "#2ecc71";
-            toggleAnswer(true); // 정답이면 자동으로 뜻 보여주기
-            speak(vocaData[currentIndex][0]);
-        } else if (currentInput.length >= targetWord.length) {
-            input.className = 'typing-input wrong';
-        }
-
-        if (event.key === 'Enter' && currentInput === targetWord) {
-            loadNextWord();
+            nextBtn.classList.add('active');
+            document.getElementById('testMsg').innerText = "통과! [Enter]를 누르거나 버튼을 클릭하세요.";
+            document.getElementById('testMsg').style.color = "#2ecc71";
+        } else {
+            input.className = 'typing-input';
+            nextBtn.classList.remove('active');
+            document.getElementById('testMsg').innerText = "단어를 정확히 입력해야 '다음' 버튼이 활성화됩니다.";
+            document.getElementById('testMsg').style.color = "#a0aec0";
         }
     }
 
-    // 별표 토글 (오답노트 저장)
+    // 엔터키 지원
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn.classList.contains('active')) {
+                loadNextWord();
+            }
+        }
+    });
+
     function toggleStar() {
         const word = vocaData[currentIndex][0];
         if (starredWords.includes(word)) {
@@ -141,15 +158,11 @@
         displayWord();
     }
 
-    function toggleAnswer(forceOpen = false) {
-        const box = document.getElementById('answerBox');
-        box.style.display = forceOpen ? 'block' : (box.style.display === 'block' ? 'none' : 'block');
-    }
-
     function speak(text) {
         window.speechSynthesis.cancel();
         const speech = new SpeechSynthesisUtterance(text);
         speech.lang = 'en-US';
+        speech.rate = 0.9;
         window.speechSynthesis.speak(speech);
     }
 
