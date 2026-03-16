@@ -31,6 +31,10 @@
         .btn-next { width: 100%; margin-top: 20px; padding: 15px; border: none; border-radius: 12px; background-color: #e74c3c; color: white; font-weight: bold; cursor: pointer; opacity: 0.5; pointer-events: none; }
         .btn-next.active { opacity: 1; pointer-events: auto; }
 
+        /* 추가된 PASS 버튼 스타일 */
+        .btn-pass { margin-top: 10px; background: none; border: none; color: #95a5a6; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+        .btn-pass:hover { color: #7f8c8d; }
+
         .hint-text { font-size: 0.8rem; color: #a0aec0; margin-top: 10px; }
     </style>
 </head>
@@ -47,8 +51,7 @@
         <div id="wordPhonetic" style="color:#7f8c8d;">/phonetic/</div>
         <div class="meaning-box" id="meaning">의미</div>
 
-        <div id="exampleList">
-            </div>
+        <div id="exampleList"></div>
     </div>
 
     <div class="test-section">
@@ -58,6 +61,8 @@
     </div>
 
     <button id="nextBtn" class="btn-next" onclick="loadNextWord()">다음 단어로 넘어가기 (Enter)</button>
+
+    <button class="btn-pass" onclick="loadNextWord()">지금은 그냥 넘어갈래요 (PASS)</button>
 </div>
 
 <script>
@@ -87,10 +92,8 @@
         document.getElementById('wordPhonetic').innerText = data[1];
         document.getElementById('meaning').innerText = data[2];
 
-        // 오답노트 상태
         document.getElementById('starBtn').classList.toggle('active', starredWords.includes(data[0]));
 
-        // 예문 로드 (무조건 2개 이상 지원)
         const exampleListDiv = document.getElementById('exampleList');
         exampleListDiv.innerHTML = '';
         data[3].forEach(ex => {
@@ -103,16 +106,19 @@
             exampleListDiv.appendChild(item);
         });
 
-        // 테스트 초기화
         const input = document.getElementById('userInput');
         input.value = '';
         input.className = 'typing-input';
         document.getElementById('nextBtn').classList.remove('active');
         document.getElementById('wordCounter').innerText = `${currentIndex + 1} / ${vocaData.length}`;
+
+        // 메시지 초기화
+        document.getElementById('testMsg').innerText = "단어를 정확히 입력해야 '다음' 버튼이 활성화됩니다.";
+        document.getElementById('testMsg').style.color = "#a0aec0";
+
         input.focus();
     }
 
-    // 테스트 체크 로직
     function checkTest() {
         const input = document.getElementById('userInput');
         const targetWord = vocaData[currentIndex][0].toLowerCase();
@@ -132,7 +138,6 @@
         }
     }
 
-    // 엔터키 지원
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             const nextBtn = document.getElementById('nextBtn');
