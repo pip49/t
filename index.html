@@ -66,7 +66,130 @@
 </div>
 
 <script>
-    const vocaData = [
+
+
+const vocaData = [
+        ["Accommodate", "/əˈkɑːmədeɪt/", "수용하다, 편의를 도모하다", [
+            {eng: "The new conference center is designed to <b>accommodate</b> up to five hundred participants for international summits.", kor: "새 컨벤션 센터는 국제 정상 회담을 위해 최대 500명의 참가자를 수용할 수 있도록 설계되었습니다."},
+            {eng: "We will make every effort to <b>accommodate</b> your special requests regarding the seating arrangements.", kor: "좌석 배치와 관련하여 귀하의 특별 요청 사항을 수용하기 위해 모든 노력을 기울일 것입니다."}
+        ]],
+        ["Acquisition", "/ˌækwɪˈzɪʃn/", "인수, 획득", [
+            {eng: "The recent <b>acquisition</b> of the smaller rival firm has significantly increased our market share in the technology sector.", kor: "소규모 경쟁 업체의 최근 인수는 기술 부문에서 당사의 시장 점유율을 크게 높였습니다."},
+            {eng: "The museum announced the <b>acquisition</b> of several rare paintings from a private collector in Europe.", kor: "박물관은 유럽의 개인 수집가로부터 여러 점의 희귀 회화를 기증받았다고 발표했습니다."}
+        ]],
+        ["Adjourn", "/əˈdʒɜːrn/", "(회의 등을) 중단하다, 휴회하다", [
+            {eng: "The chairperson decided to <b>adjourn</b> the board meeting until next Monday due to the lack of a quorum.", kor: "의장은 정족수 부족으로 인해 이사회를 다음 주 월요일까지 휴회하기로 결정했습니다."},
+            {eng: "Let's <b>adjourn</b> for lunch and reconvene here at two o'clock to finalize the budget proposal.", kor: "점심 식사를 위해 정회하고, 예산안을 확정하기 위해 2시에 여기에서 다시 모입시다."}
+        ]],
+        ["Affordable", "/əˈfɔːrdəbl/", "가격이 알맞은, 저렴한", [
+            {eng: "The city council is implementing new policies to provide more <b>affordable</b> housing options for low-income families.", kor: "시의회는 저소득 가구를 위해 더 저렴한 주택 옵션을 제공하기 위한 새로운 정책을 시행하고 있습니다."},
+            {eng: "This high-quality laptop is surprisingly <b>affordable</b> compared to other models with similar specifications.", kor: "이 고성능 노트북은 유사한 사양의 다른 모델에 비해 놀라울 정도로 가격이 저렴합니다."}
+        ]],
+        ["Ambitious", "/æmˈbɪʃəs/", "야심 있는, 야심찬", [
+            {eng: "The startup has set <b>ambitious</b> targets for international expansion within its first three years of operation.", kor: "그 스타트업은 운영 첫 3년 이내에 국제적 확장을 위한 야심찬 목표를 설정했습니다."},
+            {eng: "She is an <b>ambitious</b> lawyer who hopes to become a partner at the prestigious law firm one day.", kor: "그녀는 언젠가 그 명망 있는 로펌의 파트너가 되기를 희망하는 야심 있는 변호사입니다."}
+        ]],
+        ["Appraise", "/əˈpreɪz/", "평가하다, 감정하다", [
+            {eng: "Managers are required to <b>appraise</b> the performance of their team members on an annual basis.", kor: "매니저들은 매년 팀원들의 성과를 평가해야 합니다."},
+            {eng: "An independent expert was hired to <b>appraise</b> the value of the estate before it was put on the market.", kor: "부동산이 시장에 나오기 전에 자산의 가치를 감정하기 위해 독립적인 전문가가 고용되었습니다."}
+        ]],
+        ["Authorization", "/ˌɔːθərəˈzeɪʃn/", "허가, 승인", [
+            {eng: "You must obtain written <b>authorization</b> from the department head before purchasing any new office equipment.", kor: "새 사무 기기를 구입하기 전에 부서장으로부터 서면 승인을 받아야 합니다."},
+            {eng: "The security system requires fingerprint <b>authorization</b> to access the highly restricted laboratory.", kor: "보안 시스템은 엄격히 제한된 실험실에 접근하기 위해 지문 승인을 요구합니다."}
+        ]],
+        ["Collaborate", "/kəˈlæbəreɪt/", "협력하다, 공동으로 작업하다", [
+            {eng: "Our research team will <b>collaborate</b> with scientists from several universities on this groundbreaking project.", kor: "우리 연구팀은 이 획기적인 프로젝트를 위해 여러 대학의 과학자들과 협력할 것입니다."},
+            {eng: "The two companies decided to <b>collaborate</b> on a joint marketing campaign to reach a wider audience.", kor: "두 회사는 더 넓은 고객층에게 다가가기 위해 공동 마케팅 캠페인을 진행하기로 결정했습니다."}
+        ]],
+        ["Commemorate", "/kəˈmeməreɪt/", "기념하다", [
+            {eng: "A special ceremony will be held next month to <b>commemorate</b> the fiftieth anniversary of the company's founding.", kor: "회사 창립 50주년을 기념하기 위해 다음 달에 특별한 기념식이 열릴 것입니다."},
+            {eng: "The statue was erected in the park to <b>commemorate</b> the soldiers who fought for their country.", kor: "나라를 위해 싸운 군인들을 기념하기 위해 공원에 동상이 세워졌습니다."}
+        ]],
+        ["Commitment", "/kəˈmɪtmənt/", "헌신, 약속, 전념", [
+            {eng: "The CEO reiterated the company's <b>commitment</b> to providing exceptional customer service and high-quality products.", kor: "CEO는 탁월한 고객 서비스와 고품질 제품을 제공하겠다는 회사의 약속을 재차 강조했습니다."},
+            {eng: "Success in this industry requires a long-term <b>commitment</b> to continuous learning and professional development.", kor: "이 업계에서의 성공은 지속적인 학습과 전문성 개발에 대한 장기적인 전념을 요구합니다."}
+        ]],
+        ["Complimentary", "/ˌkɑːmplɪˈmentri/", "무료의, 칭찬하는", [
+            {eng: "Hotel guests can enjoy a <b>complimentary</b> breakfast buffet served in the main dining room every morning.", kor: "호텔 투숙객은 매일 아침 메인 다이닝 룸에서 제공되는 무료 조식 뷔페를 즐길 수 있습니다."},
+            {eng: "We are pleased to offer you two <b>complimentary</b> tickets to our upcoming theatrical performance.", kor: "다가오는 연극 공연의 무료 티켓 두 장을 귀하에게 제공하게 되어 기쁩니다."}
+        ]],
+        ["Confidential", "/ˌkɑːnfɪˈdenʃl/", "기밀의, 비밀의", [
+            {eng: "All <b>confidential</b> documents must be kept in a locked filing cabinet and shredded after use.", kor: "모든 기밀 문서는 잠긴 파일 수납장에 보관해야 하며 사용 후에는 파쇄해야 합니다."},
+            {eng: "The information discussed during the meeting is strictly <b>confidential</b> and should not be shared with outside parties.", kor: "회의 중에 논의된 정보는 엄격히 기밀이며 외부 당사자와 공유해서는 안 됩니다."}
+        ]],
+        ["Congested", "/kənˈdʒestɪd/", "혼잡한, 정체된", [
+            {eng: "The local government is considering building a new bypass to alleviate traffic in the heavily <b>congested</b> downtown area.", kor: "지방 정부는 심하게 혼잡한 시내 지역의 교통을 완화하기 위해 새로운 우회 도로 건설을 검토하고 있습니다."},
+            {eng: "During the holiday season, the airport terminals become extremely <b>congested</b> with travelers.", kor: "휴가철에는 공항 터미널이 여행객들로 매우 혼잡해집니다."}
+        ]],
+        ["Consecutive", "/kənˈsekjətɪv/", "연속적인", [
+            {eng: "The company reported record-breaking profits for the third <b>consecutive</b> quarter, exceeding analysts' expectations.", kor: "회사는 분석가들의 예상을 뛰어넘어 3분기 연속으로 기록적인 이익을 보고했습니다."},
+            {eng: "Heavy rain is forecasted to continue for four <b>consecutive</b> days, increasing the risk of flooding.", kor: "4일 연속으로 폭우가 내릴 것으로 예상되어 홍수 위험이 높아지고 있습니다."}
+        ]],
+        ["Deliberate", "/dɪˈlɪbərət/", "고의적인, 신중한", [
+            {eng: "The committee took a <b>deliberate</b> approach to reviewing the applicants, ensuring each one was treated fairly.", kor: "위원회는 각 지원자가 공정하게 대우받을 수 있도록 지원자들을 검토하는 데 신중한 접근 방식을 취했습니다."},
+            {eng: "It was a <b>deliberate</b> decision to delay the product launch until the software bugs were completely fixed.", kor: "소프트웨어 버그가 완전히 수정될 때까지 제품 출시를 연기한 것은 의도적인 결정이었습니다."}
+        ]],
+        ["Designate", "/ˈdezɪɡneɪt/", "지정하다, 지명하다", [
+            {eng: "The management has decided to <b>designate</b> specific areas in the building as smoke-free zones.", kor: "경영진은 건물 내 특정 구역을 금연 구역으로 지정하기로 결정했습니다."},
+            {eng: "We need to <b>designate</b> a project leader who will be responsible for overseeing the entire development process.", kor: "전체 개발 프로세스를 감독할 책임을 질 프로젝트 리더를 지명해야 합니다."}
+        ]],
+        ["Deteriorate", "/dɪˈtɪriəreɪt/", "악화되다", [
+            {eng: "The old bridge has begun to <b>deteriorate</b> due to a lack of maintenance and exposure to harsh weather conditions.", kor: "오래된 다리는 유지 보수 부족과 가혹한 날씨 노출로 인해 악화되기 시작했습니다."},
+            {eng: "Unless we take immediate action, the relationship between the two departments will continue to <b>deteriorate</b>.", kor: "우리가 즉각적인 조치를 취하지 않는 한, 두 부서 간의 관계는 계속 악화될 것입니다."}
+        ]],
+        ["Discard", "/dɪˈskɑːrd/", "버리다, 폐기하다", [
+            {eng: "Please <b>discard</b> any outdated manuals and replace them with the latest versions available on the internal server.", kor: "오래된 매뉴얼은 폐기하고 내부 서버에서 사용 가능한 최신 버전으로 교체해 주십시오."},
+            {eng: "It is important to <b>discard</b> chemicals properly to prevent environmental contamination and ensure safety.", kor: "환경 오염을 방지하고 안전을 보장하기 위해 화학 물질을 적절하게 폐기하는 것이 중요합니다."}
+        ]],
+        ["Disrupt", "/dɪsˈrʌpt/", "방해하다, 중단시키다", [
+            {eng: "The unexpected power outage managed to <b>disrupt</b> the entire manufacturing process for several hours.", kor: "예상치 못한 정전으로 인해 몇 시간 동안 전체 제조 공정이 중단되었습니다."},
+            {eng: "Technological innovations often <b>disrupt</b> traditional industries, forcing established companies to adapt quickly.", kor: "기술 혁신은 종종 전통 산업을 방해하며, 기성 기업들이 빠르게 적응하도록 강요합니다."}
+        ]],
+        ["Eliminate", "/ɪˈlɪmɪneɪt/", "제거하다, 없애다", [
+            {eng: "The new automated system is expected to <b>eliminate</b> manual data entry errors and improve overall efficiency.", kor: "새로운 자동화 시스템은 수동 데이터 입력 오류를 제거하고 전반적인 효율성을 향상시킬 것으로 기대됩니다."},
+            {eng: "Our goal is to <b>eliminate</b> all unnecessary expenses to remain competitive in the global market.", kor: "우리의 목표는 글로벌 시장에서 경쟁력을 유지하기 위해 모든 불필요한 비용을 없애는 것입니다."}
+        ]],
+        ["Enhance", "/ɪnˈhæns/", "향상시키다, 강화하다", [
+            {eng: "The company plans to install new software to <b>enhance</b> the security of its online banking platform.", kor: "회사는 온라인 뱅킹 플랫폼의 보안을 강화하기 위해 새로운 소프트웨어를 설치할 계획입니다."},
+            {eng: "Regular training sessions can <b>enhance</b> the skills and productivity of our workforce significantly.", kor: "정기적인 교육 세션은 우리 인력의 기술과 생산성을 크게 향상시킬 수 있습니다."}
+        ]],
+        ["Feasible", "/ˈfiːzəbl/", "실행 가능한", [
+            {eng: "After conducting a thorough market analysis, we concluded that the proposed expansion plan is financially <b>feasible</b>.", kor: "철저한 시장 분석을 거친 후, 우리는 제안된 확장 계획이 재정적으로 실행 가능하다는 결론을 내렸습니다."},
+            {eng: "It is not <b>feasible</b> to complete the entire project within such a short timeframe without additional resources.", kor: "추가 리소스 없이는 그렇게 짧은 기간 내에 전체 프로젝트를 완료하는 것이 실행 가능하지 않습니다."}
+        ]],
+        ["Fluctuate", "/ˈflʌktʃueɪt/", "변동하다", [
+            {eng: "Stock prices often <b>fluctuate</b> wildly in response to political instability and economic news.", kor: "주가는 종종 정치적 불안정과 경제 뉴스에 반응하여 심하게 변동합니다."},
+            {eng: "The demand for seasonal products tends to <b>fluctuate</b> throughout the year based on weather conditions.", kor: "계절 상품에 대한 수요는 날씨 조건에 따라 일 년 내내 변동하는 경향이 있습니다."}
+        ]],
+        ["Implementation", "/ˌɪmplɪmenˈteɪʃn/", "이행, 실행", [
+            {eng: "The successful <b>implementation</b> of the new software required extensive training for all staff members.", kor: "새로운 소프트웨어의 성공적인 실행을 위해 모든 직원들에 대한 광범위한 교육이 필요했습니다."},
+            {eng: "Management is currently overseeing the <b>implementation</b> of several cost-cutting measures across all departments.", kor: "경영진은 현재 모든 부서에 걸쳐 여러 비용 절감 조치의 실행을 감독하고 있습니다."}
+        ]],
+        ["Incur", "/ɪnˈkɜːr/", "(비용을) 발생시키다, (손해를) 입다", [
+            {eng: "Please be aware that you may <b>incur</b> additional charges if you exceed your monthly data allowance.", kor: "월간 데이터 허용량을 초과할 경우 추가 요금이 발생할 수 있음을 유의하시기 바랍니다."},
+            {eng: "The company will <b>incur</b> significant losses if the current decline in sales continues for another quarter.", kor: "현재의 매출 감소가 한 분기 더 지속된다면 회사는 상당한 손실을 입게 될 것입니다."}
+        ]],
+        ["Mandatory", "/ˈmændətɔːri/", "의무적인, 필수의", [
+            {eng: "Attendance at the annual safety orientation is <b>mandatory</b> for all laboratory personnel without exception.", kor: "예외 없이 모든 실험실 인원에게 연례 안전 교육 참석은 의무적입니다."},
+            {eng: "The government has made it <b>mandatory</b> for all public buildings to be accessible to people with disabilities.", kor: "정부는 모든 공공 건물이 장애인이 접근 가능하도록 하는 것을 의무화했습니다."}
+        ]],
+        ["Negotiate", "/nɪˈɡəʊʃieɪt/", "협상하다", [
+            {eng: "The union representative is scheduled to <b>negotiate</b> a new contract with the management next week.", kor: "노조 대표는 다음 주에 경영진과 새로운 계약을 협상할 예정입니다."},
+            {eng: "Our procurement team was able to <b>negotiate</b> a significant discount by purchasing raw materials in bulk.", kor: "우리 조달팀은 원자재를 대량으로 구매함으로써 상당한 할인을 협상할 수 있었습니다."}
+        ]],
+        ["Outcome", "/ˈaʊtkʌm/", "결과, 성과", [
+            {eng: "The <b>outcome</b> of the clinical trials will determine whether the new drug receives approval from the authorities.", kor: "임상 시험의 결과가 새 약물이 당국으로부터 승인을 받을지 여부를 결정할 것입니다."},
+            {eng: "We are very pleased with the <b>outcome</b> of the marketing campaign, as it led to a 20% increase in sales.", kor: "마케팅 캠페인의 결과가 매출 20% 증가로 이어져 매우 기쁩니다."}
+        ]],
+        ["Persuade", "/pərˈsweɪd/", "설득하다", [
+            {eng: "The sales team worked hard to <b>persuade</b> the potential client to sign a long-term service agreement.", kor: "영업팀은 잠재 고객이 장기 서비스 계약에 서명하도록 설득하기 위해 열심히 노력했습니다."},
+            {eng: "It is difficult to <b>persuade</b> people to change their habits unless they understand the benefits of doing so.", kor: "그렇게 함으로써 얻는 이점을 이해하지 못하면 사람들의 습관을 바꾸도록 설득하는 것은 어렵습니다."}
+        ]],
+        ["Precaution", "/prɪˈkɔːʃn/", "예방 조치, 조심", [
+            {eng: "As a <b>precaution</b>, the building was evacuated immediately after the fire alarm was triggered.", kor: "예방 조치로서 화재 경보가 울린 직후 건물에서 즉시 대피했습니다."},
+            {eng: "You should take every <b>precaution</b> to protect your personal information when using public Wi-Fi networks.", kor: "공용 와이파이 네트워크를 사용할 때는 개인 정보를 보호하기 위해 모든 예방 조치를 취해야 합니다."}
+        ]],
+    
         [
             "Procrastinate", "/prəˈkræstɪneɪt/", "미루다, 지연하다",
             [
